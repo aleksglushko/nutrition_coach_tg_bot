@@ -103,7 +103,7 @@ async def start(message: types.Message):
     await bot.send_sticker(message.chat.id, STICKERS['hi'])
     #with open("/Users/aleksandr.glushko/Coding/nutrition_bot/src/images/nutrition_coach_welcome.jpg", "rb") as photo:
     #    await bot.send_photo(message.chat.id, photo=photo)
-    await bot.send_message(message.chat.id, MESSAGES['start'], reply_markup=kb.greet_kb)
+    await bot.send_message(message.chat.id, MESSAGES['start'], reply_markup=kb.greet_kb, parse_mode='Markdown')
     
 
 ######### onboarding
@@ -111,7 +111,7 @@ async def start(message: types.Message):
 @dp.message_handler(Text(equals='Привет, Коуч! 👋'))
 async def gender_button_click(message: types.Message):
     await bot.send_message(message.chat.id, 
-                        f"{message.from_user.first_name}, {MESSAGES['gender']}",
+                        f"{message.from_user.first_name}! {MESSAGES['gender']}",
                         reply_markup=kb.gender_keyboard)
     await Form.gender.set()
 
