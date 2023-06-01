@@ -6,7 +6,7 @@ greet_kb = ReplyKeyboardMarkup(
 
 gender_keyboard = ReplyKeyboardMarkup(
     resize_keyboard=True, one_time_keyboard=True
-).add(KeyboardButton('Мужской'), KeyboardButton('Женский'), KeyboardButton('Другой'))
+).add(KeyboardButton('Мужчина'), KeyboardButton('Женщина'), KeyboardButton('Другое'))
 
 breakfast_keyboard = ReplyKeyboardMarkup(
     resize_keyboard=True, one_time_keyboard=True
