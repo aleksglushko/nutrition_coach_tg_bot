@@ -390,7 +390,7 @@ async def process_recommend(message: types.Message, state: FSMContext):
     sticker_message = await bot.send_sticker(message.chat.id, STICKERS['wait'])
     sticker_message_id = sticker_message.message_id
 
-    waiting_message = await bot.send_message(message.chat.id, "Составляю рекомендацию...\nОбычно это занимает около 30 секунд, пожалуйста, ожидайте.")
+    waiting_message = await bot.send_message(message.chat.id, "Составляю рекомендацию...\nОбычно это занимает около 30 секунд, пожалуйста, ожидайте.", reply_markup=None)
     waiting_message_id = waiting_message.message_id
 
     loop = asyncio.get_event_loop()
@@ -407,9 +407,9 @@ async def list_preferences(message: types.Message):
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
     await bot.send_message(message.chat.id, f"{MESSAGES['help']}")
 
-@dp.message_handler()
-async def echo_message(msg: types.Message):
-    await bot.send_message(msg.from_user.id, msg.text)
+# @dp.message_handler()
+# async def echo_message(msg: types.Message):
+#     await bot.send_message(msg.from_user.id, msg.text)
 
 async def send_daily_message(user_id):
     await bot.send_message(user_id, "Good morning! Here's your daily message...")
