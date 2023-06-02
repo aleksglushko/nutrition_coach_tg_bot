@@ -93,8 +93,9 @@ class Form(StatesGroup):
 bot = Bot(token=TG_BOT_TOKEN)
 dp = Dispatcher(bot, storage=MemoryStorage())
 
-@dp.message_handler(commands=['start'])
-async def start(message: types.Message):    
+@dp.message_handler(Command('start'), state='*')
+async def start(message: types.Message, state: FSMContext):    
+    await state.finish()
     await register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
     db.set_user_attribute(message.from_user.id, "first_feedback", True)
