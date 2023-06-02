@@ -46,7 +46,7 @@ logger.setLevel(logging.DEBUG)
 scheduler = AsyncIOScheduler()
 
 from concurrent.futures import ThreadPoolExecutor
-executor_asyncio = ThreadPoolExecutor(max_workers=5)
+executor_asyncio = ThreadPoolExecutor(max_workers=32)
 
 # database related 
 db = database.Database()
@@ -111,7 +111,7 @@ async def start(message: types.Message):
 @dp.message_handler(Text(equals='Привет, Коуч! 👋'))
 async def gender_button_click(message: types.Message):
     await bot.send_message(message.chat.id, 
-                        f"{message.from_user.first_name}! {MESSAGES['gender']}",
+                        f"{message.from_user.first_name}, {MESSAGES['gender']}",
                         reply_markup=kb.gender_keyboard)
     await Form.gender.set()
 
