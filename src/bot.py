@@ -104,7 +104,8 @@ async def start(message: types.Message, state: FSMContext):
     await bot.send_sticker(message.chat.id, STICKERS['hi'])
     #with open("/Users/aleksandr.glushko/Coding/nutrition_bot/src/images/nutrition_coach_welcome.jpg", "rb") as photo:
     #    await bot.send_photo(message.chat.id, photo=photo)
-    await bot.send_message(message.chat.id, MESSAGES['start'], reply_markup=kb.greet_kb, parse_mode='Markdown')
+    await bot.send_message(message.chat.id, f"Привет, {message.from_user.first_name}! 👋 \n\n" + MESSAGES['start'], 
+                           reply_markup=kb.greet_kb, parse_mode='Markdown')
     
 
 ######### onboarding
