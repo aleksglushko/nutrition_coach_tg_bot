@@ -14,11 +14,11 @@ breakfast_keyboard = ReplyKeyboardMarkup(
 
 lunch_keyboard = ReplyKeyboardMarkup(
     resize_keyboard=True, one_time_keyboard=True
-).add(KeyboardButton('Суп'), KeyboardButton('Паста '), KeyboardButton('Рис'))
+).add(KeyboardButton('Суп'), KeyboardButton('Паста '), KeyboardButton('Крупа'))
 
 dinner_keyboard = ReplyKeyboardMarkup(
     resize_keyboard=True, one_time_keyboard=True
-).add(KeyboardButton('Салат'), KeyboardButton('Курица'), KeyboardButton('Лосось'))
+).add(KeyboardButton('Салат'), KeyboardButton('Курица'), KeyboardButton('Рыба'))
 
 recomm_keyboard = ReplyKeyboardMarkup(
     resize_keyboard=True, one_time_keyboard=True

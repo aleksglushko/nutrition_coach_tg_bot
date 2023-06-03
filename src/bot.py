@@ -197,14 +197,14 @@ async def breakfast_handler(message: types.Message, state: FSMContext):
     db.set_user_attribute(message.from_user.id, "breakfast", [message.text])
     await bot.send_message(message.from_user.id, MESSAGES["lunch"], reply_markup=kb.lunch_keyboard)
 
-@dp.message_handler(lambda message: message.text in ['Суп', 'Паста', 'Рис'])
+@dp.message_handler(lambda message: message.text in ['Суп', 'Паста', 'Крупа'])
 async def lunch_handler(message: types.Message, state: FSMContext):
     await register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
     db.set_user_attribute(message.from_user.id, "lunch", [message.text])
     await bot.send_message(message.from_user.id, MESSAGES["dinner"], reply_markup=kb.dinner_keyboard)
 
-@dp.message_handler(lambda msg: msg.text in ['Салат', 'Курица', 'Лосось', 'Креветки'])
+@dp.message_handler(lambda msg: msg.text in ['Салат', 'Курица', 'Рыба'])
 async def dinner_handler(message: types.Message, state: FSMContext):
     await register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
