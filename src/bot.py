@@ -130,8 +130,11 @@ async def gender_button_click(message: types.Message, state: FSMContext):
 async def process_weight(message: types.Message, state: FSMContext):
     await register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
+    command_id = message.message_id
     if message.text[0] == "/": 
         await state.finish()
+        await bot.delete_message(command_id)
+        await bot.send_message(message.from_user.id, message.text)
     else:
         try:
             int(message.text)
@@ -152,8 +155,11 @@ async def process_weight_goal(message: types.Message, state: FSMContext):
     await register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
     db.set_user_attribute(message.from_user.id, "weight_goal", message.text)
+    command_id = message.message_id
     if message.text[0] == "/": 
         await state.finish()
+        await bot.delete_message(command_id)
+        await bot.send_message(message.from_user.id, message.text)
     else:
         try:
             int(message.text)
@@ -181,8 +187,11 @@ async def process_weight_goal(message: types.Message, state: FSMContext):
 async def process_height(message: types.Message, state: FSMContext):
     await register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
+    command_id = message.message_id
     if message.text[0] == "/": 
         await state.finish()
+        await bot.delete_message(command_id)
+        await bot.send_message(message.from_user.id, message.text)
     else:
         try:
             int(message.text)
