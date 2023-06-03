@@ -254,7 +254,7 @@ async def process_receipt(message: types.Message, state: FSMContext):
 
     await state.finish()
 
-@dp.message_handler(commands='ask_me')
+@dp.message_handler(commands='ask_question')
 async def trigger_feedback(message: types.Message, state: FSMContext):
     await register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
