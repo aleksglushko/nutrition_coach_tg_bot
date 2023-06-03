@@ -130,65 +130,74 @@ async def gender_button_click(message: types.Message, state: FSMContext):
 async def process_weight(message: types.Message, state: FSMContext):
     await register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
-    try:
-        int(message.text)
-    except:
-        await bot.send_message(message.from_user.id, "Кажется ты указал неправильный вес, попробуй еще раз.")
-        await Form.weight.set()
-    if int(message.text) < 40 or int(message.text) > 200:
-        await bot.send_message(message.from_user.id, "Кажется ты указал неправильный вес, попробуй еще раз.")
-        await Form.weight.set()
+    if message.text[0] == "/": 
+        await state.finish()
     else:
-        db.set_user_attribute(message.from_user.id, "weight", message.text)
-        await bot.send_message(message.from_user.id, MESSAGES["weight_goal"])
-        await state.update_data(weight=message.text)
-        await Form.next()
+        try:
+            int(message.text)
+        except:
+            await bot.send_message(message.from_user.id, "Кажется ты указал неправильный вес, попробуй еще раз.")
+            await Form.weight.set()
+        if int(message.text) < 40 or int(message.text) > 200:
+            await bot.send_message(message.from_user.id, "Кажется ты указал неправильный вес, попробуй еще раз.")
+            await Form.weight.set()
+        else:
+            db.set_user_attribute(message.from_user.id, "weight", message.text)
+            await bot.send_message(message.from_user.id, MESSAGES["weight_goal"])
+            await state.update_data(weight=message.text)
+            await Form.next()
     
 @dp.message_handler(state=Form.weight_goal)
 async def process_weight_goal(message: types.Message, state: FSMContext):
     await register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
     db.set_user_attribute(message.from_user.id, "weight_goal", message.text)
-    try:
-        int(message.text)
-    except:
-        await bot.send_message(message.from_user.id, "Кажется ты указал неправильный вес, попробуй еще раз.")
-        await Form.weight_goal.set()
-    if int(message.text) < 40 or int(message.text) > 200:
-        await bot.send_message(message.from_user.id, "Кажется ты указал неправильный вес, попробуй еще раз.")
-        await Form.weight_goal.set()
+    if message.text[0] == "/": 
+        await state.finish()
     else:
-        curr_weight = db.get_user_attribute(message.from_user.id, "weight")
-        goal = ""
-        if int(curr_weight) < int(message.text):
-            goal = "gain weight"
-        elif int(curr_weight) == int(message.text):
-            goal = "maintain weight"
+        try:
+            int(message.text)
+        except:
+            await bot.send_message(message.from_user.id, "Кажется ты указал неправильный вес, попробуй еще раз.")
+            await Form.weight_goal.set()
+        if int(message.text) < 40 or int(message.text) > 200:
+            await bot.send_message(message.from_user.id, "Кажется ты указал неправильный вес, попробуй еще раз.")
+            await Form.weight_goal.set()
         else:
-            goal = "lose weight"
-        db.set_user_attribute(message.from_user.id, "goal", goal)
-        await bot.send_message(message.from_user.id, MESSAGES["height"])
-        await state.update_data(weight_goal=message.text)
-        await Form.next()
+            curr_weight = db.get_user_attribute(message.from_user.id, "weight")
+            goal = ""
+            if int(curr_weight) < int(message.text):
+                goal = "gain weight"
+            elif int(curr_weight) == int(message.text):
+                goal = "maintain weight"
+            else:
+                goal = "lose weight"
+            db.set_user_attribute(message.from_user.id, "goal", goal)
+            await bot.send_message(message.from_user.id, MESSAGES["height"])
+            await state.update_data(weight_goal=message.text)
+            await Form.next()
 
 @dp.message_handler(state=Form.height)
 async def process_height(message: types.Message, state: FSMContext):
     await register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
-    try:
-        int(message.text)
-    except:
-        await bot.send_message(message.from_user.id, "Кажется ты указал неправильный рост, попробуй еще раз.")
-        await Form.height.set()
-    if int(message.text) < 40 or int(message.text) > 240:
-        await bot.send_message(message.from_user.id, "Кажется ты указал неправильный рост, попробуй еще раз.")
-        await Form.height.set()
-    else:
-        db.set_user_attribute(message.from_user.id, "height", message.text)
-        await state.update_data(weight=message.text)
-        await bot.send_sticker(message.chat.id, STICKERS['super'])
-        await bot.send_message(message.from_user.id, MESSAGES["breakfast"], reply_markup=kb.breakfast_keyboard)
+    if message.text[0] == "/": 
         await state.finish()
+    else:
+        try:
+            int(message.text)
+        except:
+            await bot.send_message(message.from_user.id, "Кажется ты указал неправильный рост, попробуй еще раз.")
+            await Form.height.set()
+        if int(message.text) < 40 or int(message.text) > 240:
+            await bot.send_message(message.from_user.id, "Кажется ты указал неправильный рост, попробуй еще раз.")
+            await Form.height.set()
+        else:
+            db.set_user_attribute(message.from_user.id, "height", message.text)
+            await state.update_data(weight=message.text)
+            await bot.send_sticker(message.chat.id, STICKERS['super'])
+            await bot.send_message(message.from_user.id, MESSAGES["breakfast"], reply_markup=kb.breakfast_keyboard)
+            await state.finish()
 
 @dp.message_handler(lambda message: message.text in ['Овсянка', 'Яйца', 'Йогурт'])
 async def breakfast_handler(message: types.Message, state: FSMContext):
