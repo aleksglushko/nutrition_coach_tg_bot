@@ -235,7 +235,7 @@ async def trigger_feedback(message: types.Message, state: FSMContext):
     await state.finish()
     await register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
-    await bot.send_message(message.chat.id, "Напиши название блюда или список продуктов, из которых хочешь его приготовить?")
+    await bot.send_message(message.chat.id, "Напиши название блюда или список продуктов, из которых хочешь его приготовить?", reply_markup=None)
     await Receipt.dish_name.set()
 
 @dp.message_handler(state=Receipt.dish_name)
@@ -269,7 +269,7 @@ async def trigger_feedback(message: types.Message, state: FSMContext):
     await state.finish()
     await register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
-    await bot.send_message(message.chat.id, "Напиши, какой вопрос ты хочешь задать нутрициологу? 👩‍💻")
+    await bot.send_message(message.chat.id, "Напиши, какой вопрос ты хочешь задать нутрициологу? 👩‍💻", reply_markup=None)
     await Question.question.set()
 
 @dp.message_handler(state=Question.question)
@@ -301,7 +301,7 @@ async def process_feedback(message: types.Message, state: FSMContext):
 @dp.message_handler(commands='get_feedback')
 async def trigger_feedback(message: types.Message, state: FSMContext):
     await state.finish()
-    await bot.send_message(message.chat.id, "На какую еду ты хочешь получить фидбек? Напиши через запятую, что ты съел 🙂?")
+    await bot.send_message(message.chat.id, "На какую еду ты хочешь получить фидбек? Напиши через запятую, что ты съел 🙂?", reply_markup=None)
     await Feedback.answer.set()
 
 @dp.message_handler(state=Feedback.answer)
@@ -422,7 +422,7 @@ async def list_preferences(message: types.Message, state: FSMContext):
     await state.finish()
     register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
-    await bot.send_message(message.chat.id, f"{MESSAGES['help']}")
+    await bot.send_message(message.chat.id, f"{MESSAGES['help']}", reply_markup=None)
 
 # @dp.message_handler()
 # async def echo_message(msg: types.Message):
