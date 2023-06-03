@@ -110,7 +110,7 @@ async def start(message: types.Message, state: FSMContext):
 
 ######### onboarding
 
-@dp.message_handler(Text(equals='Привет, Коуч! 👋'))
+@dp.message_handler(Text(equals='Привет, привет! 👋'))
 async def gender_button_click(message: types.Message):
     await bot.send_message(message.chat.id, 
                         f"{message.from_user.first_name}, {MESSAGES['gender']}",
