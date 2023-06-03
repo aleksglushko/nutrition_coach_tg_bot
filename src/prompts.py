@@ -13,7 +13,7 @@ question_prompt = ["As a nutrition coach with over 10 years of experience, I wan
                    "Structure the text so that it is easy to read. The answer shouldn't be very big. In response, use emoji where they are needed so that it is not boring. Write in Russian."]
 
 old_recommend_prompt = ["As a nutrition coach with over 10 years of experience, I want you to advise me on what to cook.",
-                    "Write no more than 3 dish names that I can cook. Two of the dishes should depend on my preferences and one should be a new one. Describe each dish briefly, in one sentence, no more than 15 words. No need to write a recipe. Structure the text so that it is easy to read. In the answer and the recipe, use emoji where they are needed so that you don't get bored. Write in Russian."]
+                    "Write no more than 3 dish names that I can cook. Two of the dishes should depend on my preferences and one should be a new one. Describe each dish briefly, in one sentence, no more than 10 words. No need to write a recipe. Structure the text so that it is easy to read. In the answer and the recipe, use emoji where they are needed so that you don't get bored. Write in Russian."]
 
 # add time, goal, preferences
 recommend_prompt = ["As a nutrition coach with over 10 years of experience, I want you to advise me on what to cook for", 

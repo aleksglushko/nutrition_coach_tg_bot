@@ -303,7 +303,7 @@ async def process_feedback(message: types.Message, state: FSMContext):
     goal = db.get_user_attribute(message.from_user.id, "goal")
     allergic_to = db.get_user_attribute(message.from_user.id, 'allergic_to')
     gender = f"My gender is {db.get_user_attribute(message.from_user.id, 'gender')}. " 
-    prompt_addition = f"I ate {message.text}. My goal is {goal}. I'm allergic to {allergic_to} " + gender
+    prompt_addition = f"I ate {message.text}. My goal is to {goal}. I'm allergic to {allergic_to} " + gender
     messages = [{"role": "system", "content": PROMPTS['feedback'][0] + prompt_addition + PROMPTS['feedback'][1]},]
 
     sticker_message = await bot.send_sticker(message.chat.id, STICKERS['wait'])
