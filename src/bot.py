@@ -223,9 +223,10 @@ async def process_weight(message: types.Message, state: FSMContext):
 
 @dp.message_handler(commands='get_recipe')
 async def trigger_feedback(message: types.Message, state: FSMContext):
+    await state.finish()
     await register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
-    await bot.send_message(message.chat.id, "Какое блюдо тебя интересует?")
+    await bot.send_message(message.chat.id, "Напиши название блюда или список продуктов, из которых хочешь его приготовить?")
     await Receipt.dish_name.set()
 
 @dp.message_handler(state=Receipt.dish_name)
@@ -256,6 +257,7 @@ async def process_receipt(message: types.Message, state: FSMContext):
 
 @dp.message_handler(commands='ask_question')
 async def trigger_feedback(message: types.Message, state: FSMContext):
+    await state.finish()
     await register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
     await bot.send_message(message.chat.id, "Напиши, какой вопрос ты хочешь задать нутрициологу? 👩‍💻")
@@ -289,6 +291,7 @@ async def process_feedback(message: types.Message, state: FSMContext):
 
 @dp.message_handler(commands='get_feedback')
 async def trigger_feedback(message: types.Message, state: FSMContext):
+    await state.finish()
     await bot.send_message(message.chat.id, "На какую еду ты хочешь получить фидбек? Напиши через запятую, что ты съел 🙂?")
     await Feedback.answer.set()
 
@@ -358,7 +361,8 @@ async def send_daily_message(user_id):
     await bot.send_message(user_id, "Good morning! Here's your daily message...")
 
 @dp.message_handler(commands=['get_recommendation'])
-async def get_recommendation(message: types.Message):
+async def get_recommendation(message: types.Message, state: FSMContext):
+    await state.finish()
     await register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
     await bot.send_message(message.from_user.id, "На какой приём пищи ты хочешь получить рекомендации?👩‍🍳", reply_markup=kb.recomm_keyboard)
@@ -405,7 +409,8 @@ async def process_recommend(message: types.Message, state: FSMContext):
     await state.finish()
 
 @dp.message_handler(commands=['help'])
-async def list_preferences(message: types.Message):
+async def list_preferences(message: types.Message, state: FSMContext):
+    await state.finish()
     register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
     await bot.send_message(message.chat.id, f"{MESSAGES['help']}")
