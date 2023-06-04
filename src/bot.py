@@ -416,7 +416,7 @@ async def process_recommend(message: types.Message, state: FSMContext):
     response = await loop.run_in_executor(executor_asyncio, openai_api.get_gpt_response, messages)
 
     await bot.delete_message(message.chat.id, sticker_message_id)
-    await bot.edit_message_text(response, message.chat.id, waiting_message_id, reply_markup=kb.feedback_recommendation_kb))
+    await bot.edit_message_text(response, message.chat.id, waiting_message_id, reply_markup=kb.feedback_recommendation_kb)
     #await bot.send_message(message.chat.id, "Чем могу еще помочь?", reply_markup=kb.feedback_recommendation_kb)
     await state.finish()
 
