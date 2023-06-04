@@ -20,7 +20,6 @@ from messages import MESSAGES
 from prompts import PROMPTS
 from stickers import STICKERS, GIFS
 import keyboards as kb
-from keyboards import timezone_options
 
 from config import TG_BOT_TOKEN
 from prompts import assistant_initialization_prompt
