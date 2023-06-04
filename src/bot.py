@@ -238,7 +238,7 @@ async def process_weight(message: types.Message, state: FSMContext):
     await state.finish()
     await Feedback.answer.set()
 
-@dp.callback_query_handler(lambda c: c.data == 'get_feedback')
+@dp.callback_query_handler(lambda c: c.data == 'get_recipe')
 async def trigger_feedback_cb(query: types.CallbackQuery, state: FSMContext):
     await state.finish()
     await register_user_if_not_exists(query.message)
@@ -314,7 +314,7 @@ async def process_feedback(message: types.Message, state: FSMContext):
 
     await state.finish()
 
-@dp.callback_query_handler(lambda c: c.data == 'get_recommendation')
+@dp.callback_query_handler(lambda c: c.data == 'get_feedback')
 async def trigger_feedback_cb(query: types.CallbackQuery, state: FSMContext):
     await state.finish()
     await bot.send_message(query.message.chat.id, "На какую еду ты хочешь получить фидбек? Напиши через запятую, что ты съел 🙂?", reply_markup=None)
