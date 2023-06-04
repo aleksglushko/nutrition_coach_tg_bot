@@ -239,6 +239,13 @@ async def process_weight(message: types.Message, state: FSMContext):
     await Feedback.answer.set()
 
 @dp.message_handler(lambda message: message.text == ['Получить рецепт'])
+async def trigger_feedback_mt(message: types.Message, state: FSMContext):
+    await state.finish()
+    await register_user_if_not_exists(message)
+    db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
+    await bot.send_message(message.chat.id, "Напиши название блюда или список продуктов, из которых хочешь его приготовить?", reply_markup=None)
+    await Receipt.dish_name.set()
+
 @dp.message_handler(commands='get_recipe')
 async def trigger_feedback(message: types.Message, state: FSMContext):
     await state.finish()
@@ -308,6 +315,11 @@ async def process_feedback(message: types.Message, state: FSMContext):
     await state.finish()
 
 @dp.message_handler(lambda message: message.text == ['Получить фидбек'])
+async def trigger_feedback_mt(message: types.Message, state: FSMContext):
+    await state.finish()
+    await bot.send_message(message.chat.id, "На какую еду ты хочешь получить фидбек? Напиши через запятую, что ты съел 🙂?", reply_markup=None)
+    await Feedback.answer.set()
+
 @dp.message_handler(commands='get_feedback')
 async def trigger_feedback(message: types.Message, state: FSMContext):
     await state.finish()
@@ -405,7 +417,7 @@ async def process_recommend(message: types.Message, state: FSMContext):
 
     await bot.delete_message(message.chat.id, sticker_message_id)
     await bot.edit_message_text(response, message.chat.id, waiting_message_id)
-    await bot.send_message(message.chat.id, "Чем могу помочь?", reply_markup=kb.feedback_recommendation_kb)
+    await bot.send_message(message.chat.id, "Чем могу еще помочь?", reply_markup=kb.feedback_recommendation_kb)
     await state.finish()
 
 @dp.message_handler(commands=['help'])
