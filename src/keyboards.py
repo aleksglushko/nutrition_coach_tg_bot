@@ -1,4 +1,4 @@
-from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup
 
 greet_kb = ReplyKeyboardMarkup(
     resize_keyboard=True, one_time_keyboard=True
@@ -24,6 +24,6 @@ recomm_keyboard = ReplyKeyboardMarkup(
     resize_keyboard=True, one_time_keyboard=True
 ).add(KeyboardButton('Завтрак'), KeyboardButton('Обед'), KeyboardButton('Ужин'), KeyboardButton('Перекус'))
 
-recommendation_btn = KeyboardButton("Получить рецепт")
-feedback_btn = KeyboardButton("Получить фидбек")
-feedback_recommendation_kb = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(recommendation_btn).add(feedback_btn)
+recommendation_btn = InlineKeyboardButton("Получить рецепт", callback_data="get_recommendation")
+feedback_btn = InlineKeyboardButton("Получить фидбек", callback_data="get_feedback")
+feedback_recommendation_kb = InlineKeyboardMarkup().add(recommendation_btn).add(feedback_btn)
