@@ -238,7 +238,8 @@ async def process_weight(message: types.Message, state: FSMContext):
     await state.finish()
     await Feedback.answer.set()
 
-@dp.message_handler(lambda message: message.text == ['Получить рецепт'], commands='get_recipe')
+@dp.message_handler(lambda message: message.text == ['Получить рецепт'])
+@dp.message_handler(commands='get_recipe')
 async def trigger_feedback(message: types.Message, state: FSMContext):
     await state.finish()
     await register_user_if_not_exists(message)
@@ -306,7 +307,8 @@ async def process_feedback(message: types.Message, state: FSMContext):
 
     await state.finish()
 
-@dp.message_handler(lambda message: message.text == ['Получить фидбек'], commands='get_feedback')
+@dp.message_handler(lambda message: message.text == ['Получить фидбек'])
+@dp.message_handler(commands='get_feedback')
 async def trigger_feedback(message: types.Message, state: FSMContext):
     await state.finish()
     await bot.send_message(message.chat.id, "На какую еду ты хочешь получить фидбек? Напиши через запятую, что ты съел 🙂?", reply_markup=None)
@@ -353,26 +355,6 @@ async def process_feedback(message: types.Message, state: FSMContext):
     else:
         await state.update_data(feedback=message.text)
         await state.finish()
-
-# @dp.message_handler(commands=['set_timezone'])
-# async def get_recommendation(message: types.Message):
-#     await bot.send_message(message.from_user.id, MESSAGES["timezone"], reply_markup=kb.timezone_kb)
-#     await Form.timezone.set()
-
-# @dp.message_handler(state=Form.timezone)
-# async def process_weight(message: types.Message, state: FSMContext):
-#     await register_user_if_not_exists(message)
-#     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
-#     if message.text in timezone_options:
-#         db.set_user_attribute(message.from_user.id, "timezone", message.text)
-
-#         await bot.send_sticker(message.chat.id, STICKERS['hooray'])
-#         await bot.send_message(message.chat.id, MESSAGES['finish_onboarding'])
-#         # ask user in case he want a reminder and then schedule
-#         schedule_job(message.from_user.id, message.text)
-#         await state.finish()
-#     else:
-#         await bot.send_message(message.from_user.id, "Invalid option. Please select a valid timezone.")
 
 async def send_daily_message(user_id):
     await bot.send_message(user_id, "Good morning! Here's your daily message...")
@@ -422,7 +404,8 @@ async def process_recommend(message: types.Message, state: FSMContext):
     response = await loop.run_in_executor(executor_asyncio, openai_api.get_gpt_response, messages)
 
     await bot.delete_message(message.chat.id, sticker_message_id)
-    await bot.edit_message_text(response, message.chat.id, waiting_message_id, reply_markup=kb.feedback_recommendation_kb)
+    await bot.edit_message_text(response, message.chat.id, waiting_message_id)
+    await bot.send_message(message.chat.id, "Чем могу помочь?", reply_markup=kb.feedback_recommendation_kb)
     await state.finish()
 
 @dp.message_handler(commands=['help'])
