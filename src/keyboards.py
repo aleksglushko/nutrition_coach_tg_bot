@@ -24,22 +24,6 @@ recomm_keyboard = ReplyKeyboardMarkup(
     resize_keyboard=True, one_time_keyboard=True
 ).add(KeyboardButton('Завтрак'), KeyboardButton('Обед'), KeyboardButton('Ужин'), KeyboardButton('Перекус'))
 
-
-
-timezone_options = [
-    "America/New_York",    # Eastern Time
-    "America/Chicago",     # Central Time
-    "America/Denver",      # Mountain Time
-    "America/Los_Angeles", # Pacific Time
-    "Europe/London",       # British Time
-    "Europe/Paris",        # Central European Time
-    "Asia/Kolkata",        # Indian Standard Time
-    "Asia/Shanghai",       # China Standard Time
-    "Asia/Tokyo",          # Japan Standard Time
-    "Australia/Sydney",    # Australian Eastern Time
-]
-
-timezone_kb = ReplyKeyboardMarkup(resize_keyboard=True)
-for timezone in timezone_options:
-    timezone_kb.add(KeyboardButton(timezone))
-
+recommendation_btn = KeyboardButton("Получить рецепт", callback_data="get_recipe")
+feedback_btn = KeyboardButton("Получить фидбек", callback_data="get_feedback")
+feedback_recommendation_kb = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add().add()
