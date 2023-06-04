@@ -26,4 +26,4 @@ recomm_keyboard = ReplyKeyboardMarkup(
 
 recommendation_btn = KeyboardButton("Получить рецепт", callback_data="get_recipe")
 feedback_btn = KeyboardButton("Получить фидбек", callback_data="get_feedback")
-feedback_recommendation_kb = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add().add()
+feedback_recommendation_kb = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(recommendation_btn).add(feedback_btn)
