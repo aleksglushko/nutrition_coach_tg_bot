@@ -18,7 +18,7 @@ import openai_api
 
 from messages import MESSAGES
 from prompts import PROMPTS
-from src.tools import if_simmilar
+from tools import if_simmilar
 from stickers import STICKERS, GIFS
 import keyboards as kb
 
