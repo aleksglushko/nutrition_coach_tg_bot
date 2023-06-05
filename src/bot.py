@@ -18,8 +18,11 @@ import openai_api
 
 from messages import MESSAGES
 from prompts import PROMPTS
+from src.tools import if_simmilar
 from stickers import STICKERS, GIFS
 import keyboards as kb
+
+from tools import if_simmilar
 
 from config import TG_BOT_TOKEN
 from prompts import assistant_initialization_prompt
@@ -325,13 +328,13 @@ async def process_feedback(message: types.Message, state: FSMContext):
 @dp.callback_query_handler(lambda c: c.data == 'get_feedback')
 async def trigger_feedback_cb(query: types.CallbackQuery, state: FSMContext):
     await state.finish()
-    await bot.send_message(query.message.chat.id, "На какую еду ты хочешь получить фидбек? Напиши через запятую, что ты съел 🙂?", reply_markup=None)
+    await bot.send_message(query.message.chat.id, "На какую еду ты хочешь получить фидбек? Напиши через запятую, что ты съел 🙂", reply_markup=None)
     await Feedback.answer.set()
 
 @dp.message_handler(commands='get_feedback')
 async def trigger_feedback(message: types.Message, state: FSMContext):
     await state.finish()
-    await bot.send_message(message.chat.id, "На какую еду ты хочешь получить фидбек? Напиши через запятую, что ты съел 🙂?", reply_markup=None)
+    await bot.send_message(message.chat.id, "На какую еду ты хочешь получить фидбек? Напиши через запятую, что ты съел 🙂", reply_markup=None)
     await Feedback.answer.set()
 
 @dp.message_handler(state=Feedback.answer)
@@ -345,9 +348,14 @@ async def process_feedback(message: types.Message, state: FSMContext):
     
     first_name = db.get_user_attribute(message.from_user.id, "first_name")
     goal = db.get_user_attribute(message.from_user.id, "goal")
-    allergic_to = db.get_user_attribute(message.from_user.id, 'allergic_to')
+
+    allergic_response = db.get_user_attribute(message.from_user.id, 'allergic_to')# + I'm allergic to {allergic_to}
+    allergic_template = ['нет', 'нету']
+    if_not_allergic = if_simmilar(allergic_response, allergic_template)
+    allergic_status = f"In regards to my allergy, I am allergic to {allergic_response}." if not if_not_allergic else "I am not allergic to anything."
+    
     gender = f"My gender is {db.get_user_attribute(message.from_user.id, 'gender')}. " 
-    prompt_addition = f"I ate {message.text}. My goal is to {goal}. I'm allergic to {allergic_to} " + gender + f"In the reply I want you to greet using my name: {first_name}"
+    prompt_addition = f"I ate {message.text}. My goal is to {goal}. " + allergic_status + gender + f"In the reply I want you to greet using my name: {first_name}"
     messages = [{"role": "system", "content": PROMPTS['feedback'][0] + prompt_addition + PROMPTS['feedback'][1]},]
 
     sticker_message = await bot.send_sticker(message.chat.id, STICKERS['wait'])
