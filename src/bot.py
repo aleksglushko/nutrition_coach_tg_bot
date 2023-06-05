@@ -343,10 +343,11 @@ async def process_feedback(message: types.Message, state: FSMContext):
         await bot.send_message(message.chat.id, "Ты не рассказал(а), что кушал(а), попробуй еще раз.")
         return
     
+    first_name = db.get_user_attribute(message.from_user.id, "first_name")
     goal = db.get_user_attribute(message.from_user.id, "goal")
     allergic_to = db.get_user_attribute(message.from_user.id, 'allergic_to')
     gender = f"My gender is {db.get_user_attribute(message.from_user.id, 'gender')}. " 
-    prompt_addition = f"I ate {message.text}. My goal is to {goal}. I'm allergic to {allergic_to} " + gender
+    prompt_addition = f"I ate {message.text}. My goal is to {goal}. I'm allergic to {allergic_to} " + gender + f"In the reply I want you to greet using my name: {first_name}"
     messages = [{"role": "system", "content": PROMPTS['feedback'][0] + prompt_addition + PROMPTS['feedback'][1]},]
 
     sticker_message = await bot.send_sticker(message.chat.id, STICKERS['wait'])
@@ -382,7 +383,7 @@ async def get_recommendation_cb(query: types.CallbackQuery, state: FSMContext):
     await state.finish()
     await register_user_if_not_exists(query.message)
     db.set_user_attribute(query.message.from_user.id, "last_interaction", datetime.now())
-    await bot.send_message(query.message.from_user.id, "На какой приём пищи ты хочешь получить рекомендации?👩‍🍳", reply_markup=kb.recomm_keyboard)
+    await bot.send_message(query.message.chat.id, "На какой приём пищи ты хочешь получить рекомендации?👩‍🍳", reply_markup=kb.recomm_keyboard)
     await Recomendation.when.set()
 
 @dp.message_handler(commands=['get_recommendation'])
