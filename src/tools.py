@@ -1,4 +1,4 @@
-import Levenstein
+import Levenshtein
 
 def if_simmilar(response, template, similarity_threshold = 3):
     # response is a string
