@@ -24,6 +24,11 @@ recomm_keyboard = ReplyKeyboardMarkup(
     resize_keyboard=True, one_time_keyboard=True
 ).add(KeyboardButton('Завтрак'), KeyboardButton('Обед'), KeyboardButton('Ужин'), KeyboardButton('Перекус'))
 
-recommendation_btn = InlineKeyboardButton("Получить рецепт", callback_data="get_recipe")
+
 feedback_btn = InlineKeyboardButton("Получить фидбек", callback_data="get_feedback")
-feedback_recommendation_kb = InlineKeyboardMarkup().add(recommendation_btn).add(feedback_btn)
+recipe_btn = InlineKeyboardButton("Получить рецепт", callback_data="get_recipe")
+question_btn = InlineKeyboardButton("Задать вопрос", callback_data="ask_question")
+recommendation_btn = InlineKeyboardButton("Получить рекомендацию", callback_data="get_recommendation")
+
+feedback_recommendation_question_kb = InlineKeyboardMarkup().add(feedback_btn).add(recommendation_btn).add(question_btn)
+recipe_recommendation_kb = InlineKeyboardMarkup().add(recipe_btn).add(recommendation_btn)

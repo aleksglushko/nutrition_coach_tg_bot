@@ -280,8 +280,16 @@ async def process_receipt(message: types.Message, state: FSMContext):
 
     await state.finish()
 
+@dp.callback_query_handler(lambda c: c.data == "ask_question")
+async def trigger_question(query: types.CallbackQuery, state: FSMContext):
+    await state.finish()
+    await register_user_if_not_exists(query.message)
+    db.set_user_attribute(query.message.from_user.id, "last_interaction", datetime.now())
+    await bot.send_message(query.message.chat.id, "Напиши, какой вопрос ты хочешь задать нутрициологу? 👩‍💻", reply_markup=None)
+    await Question.question.set()
+
 @dp.message_handler(commands='ask_question')
-async def trigger_feedback(message: types.Message, state: FSMContext):
+async def trigger_question(message: types.Message, state: FSMContext):
     await state.finish()
     await register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
@@ -359,17 +367,23 @@ async def process_feedback(message: types.Message, state: FSMContext):
         db.set_user_attribute(message.from_user.id, "first_feedback", False) 
         await state.finish()
         await bot.send_sticker(message.chat.id, STICKERS['hooray'])
-        await bot.send_message(message.chat.id, MESSAGES['finish_onboarding'])
+        await bot.send_message(message.chat.id, MESSAGES['finish_onboarding'], reply_markup=kb.feedback_recommendation_question_kb)
 
-        # for timezone
-        # await bot.send_message(message.from_user.id, MESSAGES["timezone"], reply_markup=kb.timezone_kb)
-        # await Form.timezone.set()
+        # TODO: set timezone
     else:
         await state.update_data(feedback=message.text)
         await state.finish()
 
 async def send_daily_message(user_id):
     await bot.send_message(user_id, "Good morning! Here's your daily message...")
+
+@dp.callback_query_handler(lambda c: c.data == "get_recommendation")
+async def get_recommendation_cb(query: types.CallbackQuery, state: FSMContext):
+    await state.finish()
+    await register_user_if_not_exists(query.message)
+    db.set_user_attribute(query.message.from_user.id, "last_interaction", datetime.now())
+    await bot.send_message(query.message.from_user.id, "На какой приём пищи ты хочешь получить рекомендации?👩‍🍳", reply_markup=kb.recomm_keyboard)
+    await Recomendation.when.set()
 
 @dp.message_handler(commands=['get_recommendation'])
 async def get_recommendation(message: types.Message, state: FSMContext):
@@ -416,7 +430,7 @@ async def process_recommend(message: types.Message, state: FSMContext):
     response = await loop.run_in_executor(executor_asyncio, openai_api.get_gpt_response, messages)
 
     await bot.delete_message(message.chat.id, sticker_message_id)
-    await bot.edit_message_text(response, message.chat.id, waiting_message_id, reply_markup=kb.feedback_recommendation_kb)
+    await bot.edit_message_text(response, message.chat.id, waiting_message_id, reply_markup=kb.recipe_recommendation_kb)
     #await bot.send_message(message.chat.id, "Чем могу еще помочь?", reply_markup=kb.feedback_recommendation_kb)
     await state.finish()
 
