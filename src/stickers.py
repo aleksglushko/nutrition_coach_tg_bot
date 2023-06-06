@@ -9,11 +9,3 @@ STICKERS = {
     'wait': wait,
     'hooray': hooray
 }
-
-
-you_da_best = "CgACAgQAAxkBAAIIGGR0aRWFr0KPgfxPhSNfSFE9J_0LAAI3AgACF3aMUufdx_pm_4WULwQ"
-foodie = "CgACAgQAAxkBAAIIeWR0clPvStLacuAqTvK5I3nrrzfYAAKgAQACfQqkUg8H-k-rG3u0LwQ"
-GIFS = {
-    'wait': foodie,
-    'hooray': you_da_best,
-}

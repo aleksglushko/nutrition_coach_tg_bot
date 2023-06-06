@@ -1,15 +1,11 @@
 import asyncio
 from aiogram import Bot, Dispatcher, types
-from aiogram.types import ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButton
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Command
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.utils import executor
 from aiogram.dispatcher.filters import Text
-
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from pytz import timezone
 
 from datetime import datetime
 import database
@@ -19,17 +15,14 @@ import openai_api
 from messages import MESSAGES
 from prompts import PROMPTS
 from tools import if_simmilar
-from stickers import STICKERS, GIFS
+from stickers import STICKERS
 import keyboards as kb
 
 from tools import if_simmilar
 
 from config import TG_BOT_TOKEN
-from prompts import assistant_initialization_prompt
 
 import logging
-# logging.basicConfig(format='%(filename)+13s [ LINE:%(lineno)-4s] %(levelname)-8s [%(asctime)s] %(message)s',
-#                     level=logging.DEBUG, encoding="cp1251")
 class MyFormatter(logging.Formatter):
     def format(self, record):
         formatted = super().format(record)
@@ -43,9 +36,6 @@ handler.setFormatter(formatter)
 logger = logging.getLogger()
 logger.addHandler(handler)
 logger.setLevel(logging.DEBUG)
-##################
-
-scheduler = AsyncIOScheduler()
 
 from concurrent.futures import ThreadPoolExecutor
 executor_asyncio = ThreadPoolExecutor(max_workers=32)
@@ -104,13 +94,8 @@ async def start(message: types.Message, state: FSMContext):
     db.start_new_dialog(message.from_user.id)
 
     await bot.send_sticker(message.chat.id, STICKERS['hi'])
-    #with open("/Users/aleksandr.glushko/Coding/nutrition_bot/src/images/nutrition_coach_welcome.jpg", "rb") as photo:
-    #    await bot.send_photo(message.chat.id, photo=photo)
     await bot.send_message(message.chat.id, f"Привет, {message.from_user.first_name}! 👋 \n\n" + MESSAGES['start'], 
                            reply_markup=kb.greet_kb, parse_mode='Markdown')
-    
-
-######### onboarding
 
 @dp.message_handler(Text(equals='Привет! 👋'))
 async def gender_button_click(message: types.Message):
@@ -132,12 +117,6 @@ async def gender_button_click(message: types.Message, state: FSMContext):
 async def process_weight(message: types.Message, state: FSMContext):
     await register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
-    # command_id = message.message_id
-    # if message.text[0] == "/": 
-    #     await state.finish()
-    #     await bot.delete_message(command_id)
-    #     await bot.send_message(message.from_user.id, message.text)
-    # else:
     try:
         int(message.text)
     except:
@@ -157,12 +136,6 @@ async def process_weight_goal(message: types.Message, state: FSMContext):
     await register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
     db.set_user_attribute(message.from_user.id, "weight_goal", message.text)
-    # command_id = message.message_id
-    # if message.text[0] == "/": 
-    #     await state.finish()
-    #     await bot.delete_message(command_id)
-    #     await bot.send_message(message.from_user.id, message.text)
-    # else:
     try:
         int(message.text)
     except:
@@ -194,12 +167,6 @@ async def process_weight_goal(message: types.Message, state: FSMContext):
 async def process_height(message: types.Message, state: FSMContext):
     await register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
-    # command_id = message.message_id
-    # if message.text[0] == "/": 
-    #     await state.finish()
-    #     await bot.delete_message(command_id)
-    #     await bot.send_message(message.from_user.id, message.text)
-    # else:
     try:
         int(message.text)
     except:
@@ -445,7 +412,6 @@ async def process_recommend(message: types.Message, state: FSMContext):
 
     await bot.delete_message(message.chat.id, sticker_message_id)
     await bot.edit_message_text(response, message.chat.id, waiting_message_id, reply_markup=kb.recipe_recommendation_kb)
-    #await bot.send_message(message.chat.id, "Чем могу еще помочь?", reply_markup=kb.feedback_recommendation_kb)
     await state.finish()
 
 @dp.message_handler(commands=['help'])
@@ -455,39 +421,11 @@ async def list_preferences(message: types.Message, state: FSMContext):
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
     await bot.send_message(message.chat.id, f"{MESSAGES['help']}", reply_markup=None)
 
-# @dp.message_handler()
-# async def echo_message(msg: types.Message):
-#     await bot.send_message(msg.from_user.id, msg.text)
-
-async def send_daily_message(user_id):
-    await bot.send_message(user_id, "Good morning! Here's your daily message...")
-
-def schedule_job(user_id, user_timezone="Europe/Paris"):
-    scheduler.add_job(send_daily_message, 'cron', id=str(user_id), hour=8, args=[user_id], timezone=timezone(user_timezone))
-
-def update_user_timezone(user_id, new_timezone):
-    try:
-        scheduler.remove_job(str(user_id))
-    except Exception as err:
-        print("Exception during deleting the scheduler job: ", err)
-
-    schedule_job(user_id, new_timezone)
-
-async def on_startup(dp):
-    # import filters
-    # import middlewares
-    # filters.setup(dp)
-    # middlewares.setup(dp)
-
-    scheduler.start()
-
 async def on_shutdown(dispatcher: Dispatcher):
     await dispatcher.storage.close()
     await dispatcher.storage.wait_closed()
-    scheduler.remove_all_jobs()
 
 if __name__ == '__main__':
     
     executor.start_polling(dp, 
-                           on_startup=on_startup, 
                            on_shutdown=on_shutdown)

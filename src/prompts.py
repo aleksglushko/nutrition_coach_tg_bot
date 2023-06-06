@@ -12,7 +12,7 @@ hilarious, supportive style and kind style. Do not mention my goal, weight or pr
 question_prompt = ["As a male nutrition coach with over 10 years of experience, you need to answer the following question of mine", 
                    "Structure the text so that it is easy to read. The answer shouldn't be very big. Write in a playful, hilarious, supportive style and kind style. In response, use emoji where they are \
                     needed so that it is not boring. Write in Russian."]
-# add time, goal, preferences
+
 recommend_prompt = ["As a male nutrition coach with over 10 years of experience, you need to advise what to cook for the provided meal time.", 
                     "Write no more than 3 dish names that I can cook. 2 of them should rely on my preferences, and one as a new experience to try. \
                     Describe each dish briefly, in one sentence, no more than 10 words. No need to write a recipe. Structure the text so that it is \
