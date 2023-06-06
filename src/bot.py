@@ -174,13 +174,18 @@ async def process_weight_goal(message: types.Message, state: FSMContext):
     else:
         curr_weight = db.get_user_attribute(message.from_user.id, "weight")
         goal = ""
+        goal_msg = ""
         if int(curr_weight) < int(message.text):
             goal = "gain weight"
+            goal_msg = "Набрать вес"
         elif int(curr_weight) == int(message.text):
             goal = "maintain weight"
+            goal_msg = "Поддерживать вес"
         else:
             goal = "lose weight"
+            goal_msg = "Похудеть"
         db.set_user_attribute(message.from_user.id, "goal", goal)
+        await bot.send_message(message.from_user.id, goal_msg + " может показаться непростой задачей, но мы с тобой справимся 😉!")
         await bot.send_message(message.from_user.id, MESSAGES["height"])
         await state.update_data(weight_goal=message.text)
         await Form.next()
