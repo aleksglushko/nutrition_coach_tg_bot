@@ -1,3 +1,0 @@
-TG_BOT_TOKEN = ''
-OPENAI_TOKEN = ''
-MONGODB_URI = ''

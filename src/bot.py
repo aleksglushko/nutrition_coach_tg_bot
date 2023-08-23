@@ -1,4 +1,10 @@
 import asyncio
+import logging
+import os
+import database
+import openai_api
+import keyboards as kb
+
 from aiogram import Bot, Dispatcher, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
@@ -6,23 +12,13 @@ from aiogram.dispatcher.filters import Command
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.utils import executor
 from aiogram.dispatcher.filters import Text
-
 from datetime import datetime
-import database
-
-import openai_api
-
+from dotenv import load_dotenv
 from messages import MESSAGES
 from prompts import PROMPTS
 from tools import if_simmilar
 from stickers import STICKERS
-import keyboards as kb
 
-from tools import if_simmilar
-
-from config import TG_BOT_TOKEN
-
-import logging
 class MyFormatter(logging.Formatter):
     def format(self, record):
         formatted = super().format(record)
@@ -40,7 +36,6 @@ logger.setLevel(logging.DEBUG)
 from concurrent.futures import ThreadPoolExecutor
 executor_asyncio = ThreadPoolExecutor(max_workers=32)
 
-# database related 
 db = database.Database()
 
 async def register_user_if_not_exists(message: types.Message):
@@ -72,7 +67,7 @@ class Recomendation(StatesGroup):
 class Question(StatesGroup):
     question = State()
     
-class Receipt(StatesGroup):
+class Recipe(StatesGroup):
     dish_name = State()
 
 class Form(StatesGroup):
@@ -82,7 +77,14 @@ class Form(StatesGroup):
     height = State()
     timezone = State()
 
-bot = Bot(token=TG_BOT_TOKEN)
+# token should be either stored in .env or as github token
+if os.getenv("GITHUB_ACTIONS"):
+    bot_token = os.getenv("TG_BOT_TOKEN")
+else:
+    load_dotenv()
+    bot_token = os.getenv("TG_BOT_TOKEN")
+
+bot = Bot(token=bot_token)
 dp = Dispatcher(bot, storage=MemoryStorage())
 
 @dp.message_handler(Command('start'), state='*')
@@ -94,10 +96,10 @@ async def start(message: types.Message, state: FSMContext):
     db.start_new_dialog(message.from_user.id)
 
     await bot.send_sticker(message.chat.id, STICKERS['hi'])
-    await bot.send_message(message.chat.id, f"Привет, {message.from_user.first_name}! 👋 \n\n" + MESSAGES['start'], 
+    await bot.send_message(message.chat.id, f"Hello, {message.from_user.first_name}! 👋 \n\n" + MESSAGES['start'], 
                            reply_markup=kb.greet_kb, parse_mode='Markdown')
 
-@dp.message_handler(Text(equals='Привет! 👋'))
+@dp.message_handler(Text(equals='Hello! 👋'))
 async def gender_button_click(message: types.Message):
     await bot.send_message(message.chat.id, 
                         f"{message.from_user.first_name}, {MESSAGES['gender']}",
@@ -120,10 +122,10 @@ async def process_weight(message: types.Message, state: FSMContext):
     try:
         int(message.text)
     except:
-        await bot.send_message(message.from_user.id, "Кажется ты указал неправильный вес, попробуй еще раз.")
+        await bot.send_message(message.from_user.id, "Seem you put the wrong number, try again.")
         await Form.weight.set()
     if int(message.text) < 40 or int(message.text) > 200:
-        await bot.send_message(message.from_user.id, "Кажется ты указал неправильный вес, попробуй еще раз.")
+        await bot.send_message(message.from_user.id, "Seem you put the wrong number, try again.")
         await Form.weight.set()
     else:
         db.set_user_attribute(message.from_user.id, "weight", message.text)
@@ -139,10 +141,10 @@ async def process_weight_goal(message: types.Message, state: FSMContext):
     try:
         int(message.text)
     except:
-        await bot.send_message(message.from_user.id, "Кажется ты указал неправильный вес, попробуй еще раз.")
+        await bot.send_message(message.from_user.id, "Seem you put the wrong number, try again.")
         await Form.weight_goal.set()
     if int(message.text) < 40 or int(message.text) > 200:
-        await bot.send_message(message.from_user.id, "Кажется ты указал неправильный вес, попробуй еще раз.")
+        await bot.send_message(message.from_user.id, "Seem you put the wrong number, try again.")
         await Form.weight_goal.set()
     else:
         curr_weight = db.get_user_attribute(message.from_user.id, "weight")
@@ -150,15 +152,15 @@ async def process_weight_goal(message: types.Message, state: FSMContext):
         goal_msg = ""
         if int(curr_weight) < int(message.text):
             goal = "gain weight"
-            goal_msg = "Набрать вес"
+            goal_msg = "Gain weight"
         elif int(curr_weight) == int(message.text):
             goal = "maintain weight"
-            goal_msg = "Поддерживать вес"
+            goal_msg = "Mantain weight"
         else:
             goal = "lose weight"
-            goal_msg = "Похудеть"
+            goal_msg = "Lose weight"
         db.set_user_attribute(message.from_user.id, "goal", goal)
-        await bot.send_message(message.from_user.id, goal_msg + " может показаться непростой задачей, но мы с тобой справимся 😉!")
+        await bot.send_message(message.from_user.id, goal_msg + " may seem like a daunting task, but we can do it. 😉!")
         await bot.send_message(message.from_user.id, MESSAGES["height"])
         await state.update_data(weight_goal=message.text)
         await Form.next()
@@ -170,10 +172,10 @@ async def process_height(message: types.Message, state: FSMContext):
     try:
         int(message.text)
     except:
-        await bot.send_message(message.from_user.id, "Кажется ты указал неправильный рост, попробуй еще раз.")
+        await bot.send_message(message.from_user.id, "Seem you put the wrong number, try again.")
         await Form.height.set()
     if int(message.text) < 40 or int(message.text) > 240:
-        await bot.send_message(message.from_user.id, "Кажется ты указал неправильный рост, попробуй еще раз.")
+        await bot.send_message(message.from_user.id, "Seem you put the wrong number, try again.")
         await Form.height.set()
     else:
         db.set_user_attribute(message.from_user.id, "height", message.text)
@@ -182,21 +184,21 @@ async def process_height(message: types.Message, state: FSMContext):
         await bot.send_message(message.from_user.id, MESSAGES["breakfast"], reply_markup=kb.breakfast_keyboard)
         await state.finish()
 
-@dp.message_handler(lambda message: message.text in ['Овсянка', 'Яйца', 'Йогурт'])
+@dp.message_handler(lambda message: message.text in ['Cereal', 'Eggs', 'Joghurt'])
 async def breakfast_handler(message: types.Message, state: FSMContext):
     await register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
     db.set_user_attribute(message.from_user.id, "breakfast", [message.text])
     await bot.send_message(message.from_user.id, MESSAGES["lunch"], reply_markup=kb.lunch_keyboard)
 
-@dp.message_handler(lambda message: message.text in ['Суп', 'Паста', 'Крупа'])
+@dp.message_handler(lambda message: message.text in ['Soup', 'Pasta', 'Rice'])
 async def lunch_handler(message: types.Message, state: FSMContext):
     await register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
     db.set_user_attribute(message.from_user.id, "lunch", [message.text])
     await bot.send_message(message.from_user.id, MESSAGES["dinner"], reply_markup=kb.dinner_keyboard)
 
-@dp.message_handler(lambda msg: msg.text in ['Салат', 'Курица', 'Рыба'])
+@dp.message_handler(lambda msg: msg.text in ['Salad', 'Chicken', 'Fish'])
 async def dinner_handler(message: types.Message, state: FSMContext):
     await register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
@@ -218,31 +220,31 @@ async def trigger_feedback_cb(query: types.CallbackQuery, state: FSMContext):
     await state.finish()
     await register_user_if_not_exists(query.message)
     db.set_user_attribute(query.message.from_user.id, "last_interaction", datetime.now())
-    await bot.send_message(query.message.chat.id, "Напиши название блюда или список продуктов, из которых хочешь его приготовить?", reply_markup=None)
-    await Receipt.dish_name.set()
+    await bot.send_message(query.message.chat.id, "Write the name of the dish or a list of the foods you want to make it with?", reply_markup=None)
+    await Recipe.dish_name.set()
 
 @dp.message_handler(commands='get_recipe')
 async def trigger_feedback(message: types.Message, state: FSMContext):
     await state.finish()
     await register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
-    await bot.send_message(message.chat.id, "Напиши название блюда или список продуктов, из которых хочешь его приготовить?", reply_markup=None)
-    await Receipt.dish_name.set()
+    await bot.send_message(message.chat.id, "Write the name of the dish or a list of the foods you want to make it with?", reply_markup=None)
+    await Recipe.dish_name.set()
 
-@dp.message_handler(state=Receipt.dish_name)
-async def process_receipt(message: types.Message, state: FSMContext):
+@dp.message_handler(state=Recipe.dish_name)
+async def process_recipe(message: types.Message, state: FSMContext):
     await register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
 
     if len(message.text) == 0 or message.text == None:
-        await bot.send_message(message.chat.id, "Ты ничего не написал(а), попробуй еще раз.")
+        await bot.send_message(message.chat.id, "You didn't write anything, try again.")
         await Question.question.set()
 
-    prompt_addition = f"I want to get a receipt for {message.text}. "
-    messages = [{"role": "system", "content": PROMPTS['receipt'][0] + prompt_addition + PROMPTS['receipt'][1]},]
+    prompt_addition = f"I want to get a recipe for {message.text}. "
+    messages = [{"role": "system", "content": PROMPTS['recipe'][0] + prompt_addition + PROMPTS['recipe'][1]},]
 
     sticker_message = await bot.send_sticker(message.chat.id, STICKERS['wait'])
-    waiting_message = await bot.send_message(message.chat.id, "Думаю над вопросом...\nОбычно это занимает около 30 секунд, пожалуйста, ожидайте.")
+    waiting_message = await bot.send_message(message.chat.id, "Thinking about the question....\nUsually it takes about 30 seconds, please wait.")
     
     sticker_message_id = sticker_message.message_id
     waiting_message_id = waiting_message.message_id
@@ -260,7 +262,7 @@ async def trigger_question(query: types.CallbackQuery, state: FSMContext):
     await state.finish()
     await register_user_if_not_exists(query.message)
     db.set_user_attribute(query.message.from_user.id, "last_interaction", datetime.now())
-    await bot.send_message(query.message.chat.id, "Напиши, какой вопрос ты хочешь задать нутрициологу? 👩‍💻", reply_markup=None)
+    await bot.send_message(query.message.chat.id, "Write down what question you want to ask a nutritionist 👩‍💻", reply_markup=None)
     await Question.question.set()
 
 @dp.message_handler(commands='ask_question')
@@ -268,7 +270,7 @@ async def trigger_question(message: types.Message, state: FSMContext):
     await state.finish()
     await register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
-    await bot.send_message(message.chat.id, "Напиши, какой вопрос ты хочешь задать нутрициологу? 👩‍💻", reply_markup=None)
+    await bot.send_message(message.chat.id, "Write down what question you want to ask a nutritionist 👩‍💻", reply_markup=None)
     await Question.question.set()
 
 @dp.message_handler(state=Question.question)
@@ -277,14 +279,14 @@ async def process_feedback(message: types.Message, state: FSMContext):
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
 
     if len(message.text) == 0 or message.text == None:
-        await bot.send_message(message.chat.id, "Ты не написал(а) вопрос, попробуй еще раз.")
+        await bot.send_message(message.chat.id, "You didn't write the question(s), try again.")
         await Question.question.set()
     
     prompt_addition = f"My question is {message.text}. "
     messages = [{"role": "system", "content": PROMPTS['ask_me'][0] + prompt_addition + PROMPTS['ask_me'][1]},]
 
     sticker_message = await bot.send_sticker(message.chat.id, STICKERS['wait'])
-    waiting_message = await bot.send_message(message.chat.id, "Думаю над вопросом...\nОбычно это занимает около 30 секунд, пожалуйста, ожидайте.")
+    waiting_message = await bot.send_message(message.chat.id, "Thinking about the question....\nUsually it takes about 30 seconds, please wait.")
     
     sticker_message_id = sticker_message.message_id
     waiting_message_id = waiting_message.message_id
@@ -300,13 +302,13 @@ async def process_feedback(message: types.Message, state: FSMContext):
 @dp.callback_query_handler(lambda c: c.data == 'get_feedback')
 async def trigger_feedback_cb(query: types.CallbackQuery, state: FSMContext):
     await state.finish()
-    await bot.send_message(query.message.chat.id, "На какую еду ты хочешь получить фидбек? Напиши через запятую, что ты съел 🙂", reply_markup=None)
+    await bot.send_message(query.message.chat.id, "What food do you want feedback on? Write in commas what you ate 🙂", reply_markup=None)
     await Feedback.answer.set()
 
 @dp.message_handler(commands='get_feedback')
 async def trigger_feedback(message: types.Message, state: FSMContext):
     await state.finish()
-    await bot.send_message(message.chat.id, "На какую еду ты хочешь получить фидбек? Напиши через запятую, что ты съел 🙂", reply_markup=None)
+    await bot.send_message(message.chat.id, "What food do you want feedback on? Write in commas what you ate 🙂", reply_markup=None)
     await Feedback.answer.set()
 
 @dp.message_handler(state=Feedback.answer)
@@ -315,7 +317,7 @@ async def process_feedback(message: types.Message, state: FSMContext):
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
 
     if len(message.text) == 0 or message.text == None:
-        await bot.send_message(message.chat.id, "Ты не рассказал(а), что кушал(а), попробуй еще раз.")
+        await bot.send_message(message.chat.id, "You didn't tell me what you ate, try again.")
         return
     
     first_name = db.get_user_attribute(message.from_user.id, "first_name")
@@ -333,7 +335,7 @@ async def process_feedback(message: types.Message, state: FSMContext):
     sticker_message = await bot.send_sticker(message.chat.id, STICKERS['wait'])
     sticker_message_id = sticker_message.message_id
 
-    waiting_message = await bot.send_message(message.chat.id, "Составляю фидбек...\nОбычно это занимает около 30 секунд, пожалуйста, ожидайте.")
+    waiting_message = await bot.send_message(message.chat.id, "I'm writing feedback...\nUsually it takes about 30 seconds, please wait.")
     waiting_message_id = waiting_message.message_id
 
     loop = asyncio.get_event_loop()
@@ -363,7 +365,7 @@ async def get_recommendation_cb(query: types.CallbackQuery, state: FSMContext):
     await state.finish()
     await register_user_if_not_exists(query.message)
     db.set_user_attribute(query.message.from_user.id, "last_interaction", datetime.now())
-    await bot.send_message(query.message.chat.id, "На какой приём пищи ты хочешь получить рекомендации?👩‍🍳", reply_markup=kb.recomm_keyboard)
+    await bot.send_message(query.message.chat.id, "What meal do you want to get recommendations for?👩‍🍳", reply_markup=kb.recomm_keyboard)
     await Recomendation.when.set()
 
 @dp.message_handler(commands=['get_recommendation'])
@@ -371,7 +373,7 @@ async def get_recommendation(message: types.Message, state: FSMContext):
     await state.finish()
     await register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
-    await bot.send_message(message.from_user.id, "На какой приём пищи ты хочешь получить рекомендации?👩‍🍳", reply_markup=kb.recomm_keyboard)
+    await bot.send_message(message.from_user.id, "What meal do you want to get recommendations for?👩‍🍳", reply_markup=kb.recomm_keyboard)
     await Recomendation.when.set()
 
 @dp.message_handler(state=Recomendation.when)
@@ -379,11 +381,11 @@ async def process_recommend(message: types.Message, state: FSMContext):
     await register_user_if_not_exists(message)
     db.set_user_attribute(message.from_user.id, "last_interaction", datetime.now())
     
-    if message.text == 'Завтрак':
+    if message.text == 'Breakfast':
         breakfast_lunch_dinner = f"I want to cook something for breakfast."
-    elif message.text == 'Обед':
+    elif message.text == 'Lunch':
         breakfast_lunch_dinner = f"I want to cook something for lunch."
-    elif message.text == 'Ужин':
+    elif message.text == 'Dinner':
         breakfast_lunch_dinner = f"I want to cook something for a light dinner."
     else:   
         breakfast_lunch_dinner = f"I want a recommendation for a snack."
@@ -403,7 +405,7 @@ async def process_recommend(message: types.Message, state: FSMContext):
     sticker_message = await bot.send_sticker(message.chat.id, STICKERS['wait'])
     sticker_message_id = sticker_message.message_id
 
-    waiting_message = await bot.send_message(message.chat.id, "Составляю рекомендацию...\nОбычно это занимает около 30 секунд, пожалуйста, ожидайте.", reply_markup=None)
+    waiting_message = await bot.send_message(message.chat.id, "Thinking about the question....\nUsually it takes about 30 seconds, please wait.", reply_markup=None)
     waiting_message_id = waiting_message.message_id
 
     loop = asyncio.get_event_loop()

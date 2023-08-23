@@ -1,31 +1,31 @@
-start_message = "На связи *бот-нутрициолог* 🤖\n\nРад, что ты хочешь улучшить свое питание, чтобы похудеть или набрать мышцы 💪\n\nТы уже знаешь немного про меня.\
-Будет здорово, если ты тоже расскажешь чуть-чуть про себя. Так я смогу сделать рекомендации персонализированными 👩‍🔬\n\nНажми на кнопку 'Привет!' и мы начнем онбординг 🙂"
+start_message = "Here's the *nutritionist bot*. 🤖\n\nGlad you want to improve your diet to lose weight or gain muscle 💪\n\nYou already know a little bit about me.\
+It would be great if you could tell me a little bit about yourself too. That way I can personalise the recommendations 👩‍🔬\n\nClick on the 'Hello!' button and we'll start onboarding 🙂"
 
-gender_message = "укажи свой пол, пожалуйста."
-weight_message = "Хорошо. А какой твой текущий вес? Напиши цифру в кг."
-weight_goal_message = "Отлично. Какой твой желаемый вес? Напиши цифру в кг."
-height_message = "Какой у тебя сейчас рост? Укажи цифру в см."
+gender_message = "State your gender, please."
+weight_message = "Good. What's your current weight? Write the number in kilograms."
+weight_goal_message = "That's great. What is your desired weight? Write the number in kg."
+height_message = "What is your current height? Give a figure in cm."
 
-breakfast_message = "Теперь давай узнаем твои предпочтения.\n\nВыбери наилучший вариант завтрака для тебя из опций ниже."
-lunch_message = "Что из этого ты выберешь съесть на обед? Отметь один наилучший вариант."
-dinner_message = "Что из этого ты предпочтёшь съесть на ужин? Выбери один наилучший вариант."
-allergence_message = "Очень важный момент. Есть ли у тебя аллергия на какую-то еду? Перечисли продукты через запятую. Например: орехи, рыба. Если нет аллергий, то напиши 'нет'."
-first_feedback = "Расскажи, что ты съел(а) вчера. Перечисли все продукты, которые ты ел(а) в течение дня вчера через запятую. И я пришлю тебе фидбек с рекомендациями."
+breakfast_message = "Now let's find out what your preferences are.\n\nPick the best breakfast option for you from the options below."
+lunch_message = "Which of these would you choose to eat for lunch? Tick one of the best options."
+dinner_message = "Which of these would you rather eat for dinner? Choose one best option."
+allergence_message = "Very important point. Are you allergic to any foods? List the foods in commas. For example: nuts, fish. If you are not allergic, then write 'no'."
+first_feedback = "Tell what you ate yesterday. List all the foods you ate during the day yesterday, separated by commas. And I'll send you feedback with recommendations."
 
-finish_onboarding_message = "Поздравляю! Ты прошел онбординг! \nНадеюсь мой фидбек был полезным для тебя👩‍🔬\n\nЕсли ты захочешь снова получить от меня фидбек на твою еду и рекомендации, ты можешь отправить команду /get_feedback и написать, что ты съел.\n\n\
-Также, ты можешь использовать другие команды:\n/get_recommendation - получить рекомендацию, что съесть на завтрак/обед/ужин/перекус.\n\
-/ask_question - задать нутрициологу любой вопрос про питание.\n/get_recipe - получить рецепт.\n/start - пройти онбординг заново, чтобы изменить свои ответы.\n\
-/help - узнать про возможности бота."
+finish_onboarding_message = "Congratulations! You made it through onboarding! \nI hope my feedback was helpful to you👩‍🔬\n\nIf you want to get feedback on your food and recommendations from me again, you can send the /get_feedback command and post what you ate.\n\n\
+Also, you can use other commands:\n/get_recommendation - get a recommendation on what to eat for breakfast/lunch/dinner/snack.\n\
+/ask_question - ask the nutritionist any nutrition question.\n/get_recipe - get a cooking recipe.\n/start - re-boarding to change your answers.\n\
+/help - learn about the bot's capabilities."
 
-timezone_message = "Последний вопрос, укажи свой часовой пояс, чтобы я мог вовремя прислать тебе рекомендации на день"
+timezone_message = "One last question, state your time zone so I can send you your recommendations for the day on time."
 
-help_message="""Варианты общения со мной 🤖:
-/get_recommendation - получить рекомендацию, что съесть
-/get_feedback - получить фидбек на еду
-/ask_question - задать вопрос про питание
-/get_recipe - получить рецепт 
-/help - узнать про возможности бота
-/start - пройти онбординг заново, чтобы изменить свои ответы
+help_message="""Options for communicating with me 🤖:
+/get_recommendation - get a recommendation on what to eat
+/get_feedback - get feedback on the food
+/ask_question - ask a nutritional question
+/get_recipe - get a cooking recipe
+/help - learn about the bot's capabilities
+/start - re-boarding to change your answers.
 """
 
 MESSAGES = {
