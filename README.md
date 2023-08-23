@@ -5,6 +5,8 @@ Nutrify is an MVP project to test the audience needs with regards of nutrition g
 
 Nutrify - a simple way to log food, get feedback about a meal, discover & share healthy food ideas, track your nutrition progress, and be a part of a huge community of people who have the same goal to lose weight. 
 
+<img width="353" alt="Screenshot 2023-08-23 at 12 13 25" src="https://github.com/aleksglushko/nutrition_coach_tg_bot/assets/33725021/975d5c5c-1850-47b1-8755-427d6473c1bf">
+
 <img width="350" alt="Screenshot 2023-08-23 at 12 04 18" src="https://github.com/aleksglushko/nutrition_coach_tg_bot/assets/33725021/8a22c646-489c-4525-bf90-42cb4687d205">
 
 <img width="353" alt="Screenshot 2023-08-23 at 12 05 41" src="https://github.com/aleksglushko/nutrition_coach_tg_bot/assets/33725021/c0a6ba41-6a17-4da4-8d34-df4f12c8e1d8">
